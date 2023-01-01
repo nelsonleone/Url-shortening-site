@@ -5,7 +5,7 @@ https://user-images.githubusercontent.com/95982650/210186876-44e3849e-fcdf-4712-
 
 
 ### Links
-- Live Site URL: [Add live site URL here](https://coruscating-taffy-aff5b1.netlify.app/)
+- Live Site URL: https://coruscating-taffy-aff5b1.netlify.app/
 
 ### Built with
 
