@@ -21,7 +21,6 @@ body{
    font-family: 'Poppins', sans-serif;
    font-size:var(--default-Fontsize);
    font-weight: 500;
-   min-width:100vh;
 }
 
 p{
