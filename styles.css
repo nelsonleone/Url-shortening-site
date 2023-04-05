@@ -209,6 +209,14 @@ header{
    color:var(--primary-Cyan);
    margin-block: .5em;
 }
+
+.inputed__shortend div{
+   display:flex;
+   align-items: center;
+   justify-content: space-between;
+   gap:10px
+}
+
 .copy-btn{
    width:100%;
    background-color:var(--primary-Cyan);
@@ -216,6 +224,16 @@ header{
    padding:.4em;
    border-radius: 5px;
 }
+
+.delete-btn{
+   width:100%;
+   background-color:red;
+   color:hsl(0, 0%, 100%);
+   padding:.4em;
+   border-radius: 5px;
+}
+
+
 .copied{
    background-color: var(--primary-dark-Violet);
 }
@@ -374,6 +392,15 @@ input:hover{
 }
 
 
+@media (min-width:30rem) {
+   .inputed__shortend div  button{
+      width:30% ;
+   }
+
+   .shorten-link-area button{
+      width:20%;
+   }
+}
 
 
 /* MEDIA QUERIES FOR LARGER SCREEN SIZES */

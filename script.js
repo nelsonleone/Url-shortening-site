@@ -2,6 +2,7 @@
 
 const openNav = document.querySelector('.toggle-menu')
 const topNav = document.getElementById('top-nav')
+let linkDataArray = []
 
 openNav.addEventListener('click',(e) => {
    if(openNav.src.match('hamburger')){
@@ -54,32 +55,90 @@ const getUrlBtn = document.getElementById('get-url')
 const resultOutput = document.querySelector('.results-output')
 getUrlBtn.addEventListener('click',getShortendUrl)
 
+// localStorage.clear()
 
 async function getShortendUrl(){
    const userInput = document.querySelector('input').value;
    const URL = `https://api.shrtco.de/v2/shorten?url=${userInput}`;
 
+
    const resp = await fetch(URL)
-   if(resp.ok){
-      const urlData = await resp.json()
-      if(checkValidURL(userInput)){
-         const linkData =`
-         <div class="inputed__shortend">
-            <p class="inputed-link">${urlData.result.original_link}</p>
-            <p class="shortend-link">${urlData.result.full_short_link2}</p>
-            <button 
-              class="copy-btn" 
-              onClick="copy(event)"
-              >
-              Copy</button>
-        </div> 
-         `
-         resultOutput.innerHTML += linkData
-         localStorage.setItem('linkData',linkData)
+   try{
+      if(resp.ok){
+         const linkData = await resp.json()
+         if(checkValidURL(userInput)){
+            linkDataArray.push({...linkData,id:Math.random()})
+            console.log(linkDataArray)
+            renderShortendLinks()
+         }
       }
-   }else{
-      alert('Sorry Network Error, try again')
    }
+   catch(err){
+      alert(err.message)
+   }
+}
+
+function handleDelete(id){
+   const newArray = linkDataArray.filter(linkData => linkData.id !== id)
+   linkDataArray = newArray;
+   console.log(linkDataArray)
+   renderShortendLinks()
+}
+
+
+function renderShortendLinks(savedLinkDataArray){
+   localStorage.setItem("linkData",JSON.stringify(linkDataArray))
+   resultOutput.innerHTML = ""
+
+   if(savedLinkDataArray){
+      savedLinkDataArray.forEach(savedLinkData => {
+         resultOutput.innerHTML+= `
+         <div class="inputed__shortend">
+            <p class="inputed-link">${savedLinkData.result.original_link}</p>
+            <p class="shortend-link">${savedLinkData.result.full_short_link2}</p>
+   
+            <div>
+               <button 
+                  class="copy-btn" 
+                  onClick="copy(event)"
+                  >
+                  Copy
+               </button>
+               <button 
+                  class="delete-btn"
+                  onClick="handleDelete(${savedLinkData.id})"
+                  >
+                  Delete
+               </button>
+            </div>
+         </div> 
+      `
+      })
+   }
+   
+   linkDataArray.forEach(linkData => {
+      resultOutput.innerHTML+= `
+      <div class="inputed__shortend">
+         <p class="inputed-link">${linkData.result.original_link}</p>
+         <p class="shortend-link">${linkData.result.full_short_link2}</p>
+
+         <div>
+            <button 
+               class="copy-btn" 
+               onClick="copy(event)"
+               >
+               Copy
+            </button>
+            <button 
+               class="delete-btn"
+               onClick="handleDelete(${linkData.id})"
+               >
+               Delete
+            </button>
+         </div>
+      </div> 
+      `
+   })
 }
 
 
@@ -91,7 +150,7 @@ function copy(e){
    e = e || window.event;
    const targetElement = e.target || e.srcElement;;
    const shortendLinks = document.querySelectorAll('.shortend-link')
-   console.log(e)
+
    document.querySelectorAll('.copy-btn').forEach((button,index) => {
       const text = shortendLinks[index].innerText;
       navigator.clipboard.writeText(text)
@@ -102,9 +161,13 @@ function copy(e){
 
 
 // HANDLING THE LOCALSTORAGE DATA
-const linkData = localStorage.getItem("linkData")
-if(linkData !== null){
-   resultOutput.innerHTML += linkData;
+window.onload = getStoredData()
+
+function getStoredData(){
+   const savedLinkDataArray = localStorage.getItem("linkData") && JSON.parse(localStorage.getItem("linkData"))
+   if(savedLinkDataArray){
+      renderShortendLinks(savedLinkDataArray)
+   }
 }
 
 
